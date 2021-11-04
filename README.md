@@ -1,2 +1,1 @@
-# CentralControlServices
- 中控
+#展厅中控系统
