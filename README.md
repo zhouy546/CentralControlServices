@@ -1,2 +1,2 @@
 #展厅中控系统
-![](CentralControlServices/img/中控01.png)
+![](image/filename img/中控01.png)
