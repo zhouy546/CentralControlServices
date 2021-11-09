@@ -27,11 +27,14 @@ public class HeartbeatSystem : MonoBehaviour
         EventCenter.AddListener(EventDefine.HeartBeatGoNext, updateGoNextDeviceAndFloorIndex);
     }
 
-    private void Update()
+    private  void Update()
     {
         if(Input.GetKeyDown(KeyCode.R)){
             SendBeat();
+
+
         }
+
 
         if (Input.GetKeyDown(KeyCode.K))
         {
@@ -45,6 +48,7 @@ public class HeartbeatSystem : MonoBehaviour
             Threadtcp tcp_thread = new Threadtcp(device.PCDeviceIP, 5000, ValueSheet.LEDCmd[2], device, true);
             tcp_thread.sendHexString();
         }
+
 
         if (Input.GetKeyDown(KeyCode.I))
         {
@@ -64,43 +68,26 @@ public class HeartbeatSystem : MonoBehaviour
             tcp_thread.sendHexString();
         }
 
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            CentralControlDevice device = ValueSheet.centralcontrolServices.floors[0].centralControlDevices[5];
+        //if (Input.GetKeyDown(KeyCode.O))
+        //{
+        //    CentralControlDevice device = ValueSheet.centralcontrolServices.floors[0].centralControlDevices[5];
 
-            string s = device.LightID + " " + ValueSheet.LightCmd[2];
+        //    string s = device.LightID + " " + ValueSheet.LightCmd[2];
 
-            //byte[] bytes = { 03,06,00,01,00,00 };
-            string output = CRC.CRCCalc(s);
+        //    //byte[] bytes = { 03,06,00,01,00,00 };
+        //    string output = CRC.CRCCalc(s);
 
-            string send = s + " " + output;
+        //    string send = s + " " + output;
 
-            Debug.Log("键盘o Press发送" + send);
+        //    Debug.Log("键盘o Press发送" + send);
 
-            tcp_thread = new Threadtcp("192.168.0.7", 28010, send, device, false);
+        //    tcp_thread = new Threadtcp("192.168.0.7", 28010, send, device, false);
 
-            tcp_thread.sendHexString();
+        //    tcp_thread.sendHexString();
 
-        }
+        //}
 
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            CentralControlDevice device = ValueSheet.centralcontrolServices.floors[0].centralControlDevices[6];
-
-            string s = device.LightID + " " + ValueSheet.LightCmd[2];
-
-            //byte[] bytes = { 03,06,00,01,00,00 };
-            string output = CRC.CRCCalc(s);
-
-            string send = s + " " + output;
-
-            Debug.Log("键盘p Press发送" + send);
-
-            tcp_thread = new Threadtcp("192.168.0.7", 28010, send, device, false);
-
-            tcp_thread.sendHexString();
-
-        }
+       
     }
      
     private void OnApplicationQuit()

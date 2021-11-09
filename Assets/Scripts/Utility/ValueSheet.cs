@@ -4,8 +4,17 @@ using UnityEngine;
 
 public static class ValueSheet
 {
-    public static int heartBeatSendWaitTime=1000;
+    public static string appid = "";
+    public static string password = "";
+
+
+    public static int reslutionX=1280;
+    public static int reslutionY=720;
+    public static string ProgramName = "CentralControlServices";
+
+    public static int heartBeatSendWaitTime=2000;
     public static int TcpReceiveWaitTime = 2000;
+    public static int TcpSendWaitTime = 1000;
     public static bool EditMode = false;
     public static floor currentFloor;
     public static CentralControlDevice currentCentralControlDevice;

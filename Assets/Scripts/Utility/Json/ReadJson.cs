@@ -86,59 +86,7 @@ public class ReadJson : MonoBehaviour
 
             EventCenter.Broadcast(EventDefine.inifromJson);
         }
-      
-
-
-
-        //Debug.Log(ValueSheet.ReadJsoncentralcontrolServices.floors[0].centralControlDevices[0].Name);
-
-        //for (int i = 0; i < itemDate["Level"][0].Count; i++)
-        //{
-        //    List<Node> nodes = new List<Node>();
-
-
-        //    string id = itemDate["Level"][0][i]["id"].ToString();
-        //    string LouImageurl = itemDate["Level"][0][i]["LouImageurl"].ToString();
-
-        //    Debug.Log("ID" + id);
-        //    for (int J = 0; J < itemDate["Level"][0][i]["nodes"].Count; J++)
-        //    {
-        //        JsonData NodeJsonData = itemDate["Level"][0][i]["nodes"][J];
-        //        string nodeID = NodeJsonData["id"].ToString();
-        //        string PosX = NodeJsonData["PosX"].ToString();
-        //        string PosY = NodeJsonData["PosY"].ToString();
-        //        string imageUrl = NodeJsonData["imageUrl"].ToString();
-        //        string imageTitle = NodeJsonData["imageTitle"].ToString();
-        //        Debug.Log("NodeID:" + nodeID + "___" + "POSX:" + PosX+"___" + "PosY:" + PosY+"___" + "imageUrl" + imageUrl+"___"+  "imageTitle" + imageTitle);
-
-
-        //        Node TEMPNode =new  Node(int.Parse(nodeID), new Vector2(float.Parse(PosX), float.Parse(PosY)), imageUrl, imageTitle);
-        //        nodes.Add(TEMPNode);
-        //    }
-        //    Lou lou = new Lou(int.Parse(id), nodes.ToArray(), LouImageurl);
-
-        //    ValueSheet.lous.Add(lou);
-
-        //}
-
-
-        ////MiscJson
-        //string MiscJsonPath = Application.streamingAssetsPath + "/MiscJson.json";
-        //WWW Miscwww = new WWW(MiscJsonPath);
-
-        //yield return www;
-
-        //jsonString = System.Text.Encoding.UTF8.GetString(Miscwww.bytes);
-
-        //JsonMapper.ToObject(www.text);
-
-        //itemDate = JsonMapper.ToObject(jsonString.ToString());
-
-        //bool isReadFromStreamingAssets =Utility.StringToBool( itemDate["Misc"][0]["isReadFromStreamingAssets"].ToString());
-
-        //Debug.Log(isReadFromStreamingAssets);
-
-        //ValueSheet.MiscData.isReadFromStreamingAssets = isReadFromStreamingAssets;
+     
 
         EventCenter.Broadcast(EventDefine.ini);
     }

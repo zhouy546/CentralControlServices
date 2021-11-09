@@ -59,30 +59,54 @@ public class Threadtcp {
 
     private void SendHexByte()
     {
-      
+
+        if (!Utility.checkIp(host))
+        {
+            BoardEvent(centralControlDevice, "null");
+
+            t.Abort();
+        }
 
         string result = string.Empty;
+
+        IPAddress ipAddress = IPAddress.Parse(host);
+
+        IPEndPoint ipep = new IPEndPoint(ipAddress, port);//IP和端口
+
         Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+        ConnectSocketDelegate connect = ConnectSocket;
+
+        IAsyncResult asyncResult = connect.BeginInvoke(ipep, clientSocket, null, null);
+
+
 
         if (isHeartbeat)
         {
             Thread.Sleep(ValueSheet.heartBeatSendWaitTime);
         }
 
-        try
-        {
-            clientSocket.Connect(host, port);
-            Debug.Log("Try Connect " + host + "port: " + port);
 
+        bool connectSuccess = asyncResult.AsyncWaitHandle.WaitOne(ValueSheet.TcpSendWaitTime, false);
 
-        }
-        catch (System.Exception e)
+        if (!connectSuccess)
         {
-            Debug.Log(e);
+            Debug.Log(string.Format("失败！错误信息：{0}", "连接超时"));
+
             BoardEvent(centralControlDevice, "null");
 
             t.Abort();
-            return;
+        }
+
+
+        string exmessage = connect.EndInvoke(asyncResult);
+        if (!string.IsNullOrEmpty(exmessage))
+        {
+            Debug.Log(string.Format("失败！错误信息：{0}", exmessage));
+
+            BoardEvent(centralControlDevice, "null");
+
+            t.Abort();
         }
 
          byte[] b = Utility.strToToHexByte(data);
@@ -107,29 +131,51 @@ public class Threadtcp {
     /// <returns></returns>
     private void Send()
     {
+        if (!Utility.checkIp(host))
+        {
+            BoardEvent(centralControlDevice, "null");
+
+            t.Abort();
+        }
         string result = string.Empty;
+
+        IPAddress ipAddress = IPAddress.Parse(host);
+
+        IPEndPoint ipep = new IPEndPoint(ipAddress, port);//IP和端口
+
         Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+        ConnectSocketDelegate connect = ConnectSocket;
+
+        IAsyncResult asyncResult = connect.BeginInvoke(ipep, clientSocket, null, null);
 
         if (isHeartbeat)
         {
             Thread.Sleep(ValueSheet.heartBeatSendWaitTime);
         }
 
-        try
-        {
-            clientSocket.Connect(host, port);
-            Debug.Log("Try Connect "+host+"port: "+port);
+        bool connectSuccess = asyncResult.AsyncWaitHandle.WaitOne(ValueSheet.TcpSendWaitTime, false);
 
-
-        }
-        catch (System.Exception e)
+        if (!connectSuccess)
         {
-            Debug.Log(e);
+            Debug.Log(string.Format("失败！错误信息：{0}", "连接超时"));
+
             BoardEvent(centralControlDevice, "null");
 
             t.Abort();
-            return;
         }
+
+
+        string exmessage = connect.EndInvoke(asyncResult);
+        if (!string.IsNullOrEmpty(exmessage))
+        {
+            Debug.Log(string.Format("失败！错误信息：{0}", exmessage));
+
+            BoardEvent(centralControlDevice, "null");
+
+            t.Abort();
+        }
+
         clientSocket.Send(encode.GetBytes(data));
        // Debug.Log("Send：" + data);
         result = Receive(clientSocket, ValueSheet.TcpReceiveWaitTime); //5*2 seconds timeout.
@@ -253,4 +299,25 @@ public class Threadtcp {
         }
         socket.Close();
     }
+
+
+    private delegate string ConnectSocketDelegate(IPEndPoint ipep, Socket sock);
+    private string ConnectSocket(IPEndPoint ipep, Socket sock)
+    {
+        string exmessage = "";
+        try
+        {
+            sock.Connect(ipep);
+        }
+        catch (System.Exception ex)
+        {
+            exmessage = ex.Message;
+        }
+        finally
+        {
+        }
+
+        return exmessage;
+    }
+
 }
