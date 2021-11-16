@@ -159,6 +159,13 @@ namespace MyUtility {
         }
 
 
+
+        public static int convertProjectorServerStatus(string s, CentralControlDevice device)
+        {
+            
+            return 4;
+        }
+
         public static int convertMediaServerStatus(string s)
         {
             if (s == ValueSheet.MediaServerReceiveCmd[0])

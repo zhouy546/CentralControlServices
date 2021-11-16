@@ -49,7 +49,7 @@ public class WriteJson : MonoBehaviour
 
                // Debug.Log(device.Name);
                 CentralControlDevice_JSON jsonDevice =  new CentralControlDevice_JSON(device.ip, device.PCDeviceIP, device.DelayedSetStateus, (int)device.deviceType, device.x, device.y
-                    , device.MName, device.LightID);
+                    , device.MName, device.LightID, device.ProjectSerial);
 
                 floor_JSON.centralControlDevices.Add(jsonDevice);
             }

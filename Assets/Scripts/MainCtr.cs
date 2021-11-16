@@ -65,10 +65,11 @@ public class MainCtr : MonoBehaviour
                 int _y = ccs_json.floors[i].centralControlDevices[j].y;
                 string _name = ccs_json.floors[i].centralControlDevices[j].Name;
                 string _LightID = ccs_json.floors[i].centralControlDevices[j].LightID.ToString();
+                string _ProjectorSerial = ccs_json.floors[i].centralControlDevices[j].ProjectorSerial.ToString();
 
                 CentralControlDevice device = new CentralControlDevice();
 
-                device.ini(_LightID, _deviceType, _name, _ip, _x, _y, sprites[0]);
+                device.ini(_LightID, _deviceType, _name, _ip, _x, _y, sprites[0], _ProjectorSerial);
 
                 centralControlDevices.Add(device);              
             }
@@ -95,6 +96,7 @@ public class MainCtr : MonoBehaviour
                 ValueSheet.centralcontrolServices.floors[i].centralControlDevices[j].y = _ccs_json.floors[i].centralControlDevices[j].y;
                 ValueSheet.centralcontrolServices.floors[i].centralControlDevices[j].MName = _ccs_json.floors[i].centralControlDevices[j].Name;
                 ValueSheet.centralcontrolServices.floors[i].centralControlDevices[j].LightID = _ccs_json.floors[i].centralControlDevices[j].LightID;
+                ValueSheet.centralcontrolServices.floors[i].centralControlDevices[j].ProjectSerial = _ccs_json.floors[i].centralControlDevices[j].ProjectorSerial;
             }
         }
 

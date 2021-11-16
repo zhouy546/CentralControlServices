@@ -18,13 +18,61 @@ public class ReadJson : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(readJson());
+        StartCoroutine(INI());
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+
+    private IEnumerator INI()
+    {
+        yield return StartCoroutine(readProjectSerial());
+
+        yield return StartCoroutine(readJson());
+
+    }
+
+    IEnumerator readProjectSerial()
+    {
+        string spath = Application.streamingAssetsPath + "/ProjectSerial.json";
+        FileInfo info = new FileInfo(spath);
+
+        if (!info.Exists)
+        {
+            Debug.Log("Œ¥’“µΩ≈‰÷√Œƒº˛");
+
+        }
+        else
+        {
+            WWW www = new WWW(spath);
+
+            yield return www;
+
+            string _jsonString = System.Text.Encoding.UTF8.GetString(www.bytes);
+
+            JsonMapper.ToObject(www.text);
+
+            JsonData _itemDate = JsonMapper.ToObject(_jsonString.ToString());
+
+            for (int i = 0; i < _itemDate["ProjectorSerial"].Count; i++)
+            {
+                string name = _itemDate["ProjectorSerial"][i]["name"].ToString();
+
+                string open = _itemDate["ProjectorSerial"][i]["open"].ToString();
+
+                string close = _itemDate["ProjectorSerial"][i]["close"].ToString();
+
+                string read = _itemDate["ProjectorSerial"][i]["read"].ToString();
+
+                int port =int.Parse(_itemDate["ProjectorSerial"][i]["port"].ToString());
+
+                ValueSheet.ProjectorCMD.Add(name, new ProjectorSerial_JSON(name, open, close, read, port));
+            }
+        }
     }
 
     IEnumerator readJson()
@@ -52,8 +100,6 @@ public class ReadJson : MonoBehaviour
 
             itemDate = JsonMapper.ToObject(jsonString.ToString());
 
-
-
             List<Floor_JSON> jsonfloor = new List<Floor_JSON>();
             for (int i = 0; i < itemDate[0]["floors"].Count; i++)
             {
@@ -67,7 +113,9 @@ public class ReadJson : MonoBehaviour
                 for (int k = 0; k < itemDate[0]["floors"][i]["centralControlDevices"].Count; k++)
                 {
                     string ip = itemDate[0]["floors"][i]["centralControlDevices"][k]["ip"].ToString();
+
                     string PCDeviceIP = itemDate[0]["floors"][i]["centralControlDevices"][k]["PCDeviceIP"].ToString();
+
                     int DelayedSetStateus = int.Parse(itemDate[0]["floors"][i]["centralControlDevices"][k]["DelayedSetStateus"].ToString());
                     int deviceType = int.Parse(itemDate[0]["floors"][i]["centralControlDevices"][k]["deviceType"].ToString());
                     int x = int.Parse(itemDate[0]["floors"][i]["centralControlDevices"][k]["x"].ToString());
@@ -76,7 +124,9 @@ public class ReadJson : MonoBehaviour
 
                     //Debug.Log(Mname);
                     string LightID = itemDate[0]["floors"][i]["centralControlDevices"][k]["LightID"].ToString();
-                    CentralControlDevice_JSON centralControlDevice_JSON = new CentralControlDevice_JSON(ip, PCDeviceIP, DelayedSetStateus, deviceType, x, y, Mname, LightID);
+
+                    string ProjectorSerial = itemDate[0]["floors"][i]["centralControlDevices"][k]["ProjectorSerial"].ToString();
+                    CentralControlDevice_JSON centralControlDevice_JSON = new CentralControlDevice_JSON(ip, PCDeviceIP, DelayedSetStateus, deviceType, x, y, Mname, LightID, ProjectorSerial);
                     floor_JSON.centralControlDevices.Add(centralControlDevice_JSON);
                 }
                 jsonfloor.Add(floor_JSON);

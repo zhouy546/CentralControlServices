@@ -1,0 +1,25 @@
+{
+    "ProjectorSerial":[
+     {
+         "name":"PJLink",  
+         "open":"",  
+         "close":"",  
+         "read":"",  
+         "port":4356
+     },
+     {
+         "name":"gs serial",  
+         "open":"",  
+         "close":"",  
+         "read":"",  
+         "port":4356
+     }, 
+     {
+         "name":"sony serial",  
+         "open":"",  
+         "close":"",  
+         "read":"",  
+         "port":4356
+     }
+    ]
+}

@@ -46,7 +46,7 @@ public class floor : MonoBehaviour
 
          //   Debug.Log("初始化" + _device[i].deviceType);
 
-            TempCentralControlDevice.ini(_device[i].LightID, _device[i].deviceType, _device[i].MName, _device[i].ip, _device[i].x, _device[i].y, _device[i].sprite);
+            TempCentralControlDevice.ini(_device[i].LightID, _device[i].deviceType, _device[i].MName, _device[i].ip, _device[i].x, _device[i].y, _device[i].sprite, _device[i].ProjectSerial);
 
             //Debug.Log(TempCentralControlDevice);
 

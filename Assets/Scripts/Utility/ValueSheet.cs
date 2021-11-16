@@ -32,7 +32,9 @@ public static class ValueSheet
     #region 灯光收发
     public static string[] LightCmd = { "06 00 02 00 01"/*ON*/, "06 00 01 00 00"/*OFF*/,"03 00 03 00 01"/*READ*/};
     public static string[] LightReceiveCmd = { "03020001"/*READ回值开*/, "03020000"/*READ回值关*/, "0600020001"/*发送开后回值*/, "0600010000"/*发送关后回值*/};
-
+    #endregion
+    #region 投影机器收发
+    public static Dictionary<string, ProjectorSerial_JSON> ProjectorCMD = new Dictionary<string, ProjectorSerial_JSON>();
     #endregion
 }
 
@@ -73,7 +75,7 @@ public class Floor_JSON
 }
 
 public class CentralControlDevice_JSON {
- 
+
     public string ip;
     public string PCDeviceIP;
     public int DelayedSetStateus;
@@ -82,19 +84,47 @@ public class CentralControlDevice_JSON {
     public int y;
     public string Name;
     public string LightID;
+    public string ProjectorSerial;
 
 
 
-    public CentralControlDevice_JSON(   string _ip,string _PCDeviceIP,int _DelayedSetStateus,int _deviceType,int _x,int _y,string _Name,string _LightID)
+    public CentralControlDevice_JSON(string _ip, string _PCDeviceIP, int _DelayedSetStateus, int _deviceType, int _x, int _y, string _Name, string _LightID, string _ProjectorSerial = "PJLink")
     {
-        ip=_ip;
-        PCDeviceIP= _PCDeviceIP;
-        DelayedSetStateus= _DelayedSetStateus;
-        deviceType= _deviceType;
-        x=_x;
-        y=_y;
-        Name=_Name;
+        ip = _ip;
+        PCDeviceIP = _PCDeviceIP;
+        DelayedSetStateus = _DelayedSetStateus;
+        deviceType = _deviceType;
+        x = _x;
+        y = _y;
+        Name = _Name;
         LightID = _LightID;
+        ProjectorSerial = _ProjectorSerial;
+    }
+}
+
+public class ProjectorSerial_JSON
+{
+    public string name;
+
+    public string open;
+
+    public string close;
+
+    public string read;
+
+    public int port;
+
+    public ProjectorSerial_JSON(string _name,string _open, string _close, string _read,int _port)
+    {
+        name = _name;
+
+        open = _open;
+
+        close = _close;
+
+        read = _read;
+
+        port = _port;
     }
 }
 

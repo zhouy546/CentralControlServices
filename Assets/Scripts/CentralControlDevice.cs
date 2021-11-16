@@ -16,6 +16,7 @@ public class CentralControlDevice : MonoBehaviour,IPointerClickHandler,IBeginDra
     public int y;
     public string MName;
     public string LightID;
+    public string ProjectSerial;
     //localData
     public Sprite sprite;
     public Text HintText;
@@ -25,7 +26,7 @@ public class CentralControlDevice : MonoBehaviour,IPointerClickHandler,IBeginDra
     
  
 
-    public void ini(string _LightID, DeviceType _deviceType, string _name, string _ip, int _x, int _y, Sprite _sprite) {
+    public void ini(string _LightID, DeviceType _deviceType, string _name, string _ip, int _x, int _y, Sprite _sprite,string _ProjectSerial= "PJLink") {
         LightID = _LightID;
 
         if (_deviceType != DeviceType.多媒体服务器)
@@ -43,7 +44,7 @@ public class CentralControlDevice : MonoBehaviour,IPointerClickHandler,IBeginDra
         x = _x;
         y = _y;
         sprite = _sprite;
-      
+        ProjectSerial = _ProjectSerial;
     }
 
     private void iniHintText()
@@ -100,6 +101,7 @@ public class CentralControlDevice : MonoBehaviour,IPointerClickHandler,IBeginDra
                MediaServerDevice.openMediaServer(PCDeviceIP,this);
                 break;
             case DeviceType.投影:
+                ProjectorDevice.openProjectorServer(ip, this);
                 break;
             case DeviceType.LED电柜:
                 LEDDevice.openLEDServer(ip, this);
@@ -120,6 +122,7 @@ public class CentralControlDevice : MonoBehaviour,IPointerClickHandler,IBeginDra
               MediaServerDevice.closeMediaServer(PCDeviceIP, this);
                 break;
             case DeviceType.投影:
+                ProjectorDevice.closeProjectorServer(ip, this);
                 break;
             case DeviceType.LED电柜:
                 LEDDevice.closeLEDServer(ip, this);

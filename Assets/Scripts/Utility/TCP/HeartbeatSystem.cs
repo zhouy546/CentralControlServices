@@ -29,17 +29,6 @@ public class HeartbeatSystem : MonoBehaviour
 
     private  void Update()
     {
-        if(Input.GetKeyDown(KeyCode.R)){
-            SendBeat();
-
-
-        }
-
-
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            tcp_thread.t.Abort();
-        }
 
         if (Input.GetKeyDown(KeyCode.J))
         {
@@ -68,24 +57,7 @@ public class HeartbeatSystem : MonoBehaviour
             tcp_thread.sendHexString();
         }
 
-        //if (Input.GetKeyDown(KeyCode.O))
-        //{
-        //    CentralControlDevice device = ValueSheet.centralcontrolServices.floors[0].centralControlDevices[5];
-
-        //    string s = device.LightID + " " + ValueSheet.LightCmd[2];
-
-        //    //byte[] bytes = { 03,06,00,01,00,00 };
-        //    string output = CRC.CRCCalc(s);
-
-        //    string send = s + " " + output;
-
-        //    Debug.Log("键盘o Press发送" + send);
-
-        //    tcp_thread = new Threadtcp("192.168.0.7", 28010, send, device, false);
-
-        //    tcp_thread.sendHexString();
-
-        //}
+   
 
        
     }
@@ -149,6 +121,15 @@ public class HeartbeatSystem : MonoBehaviour
             tcp_thread.sendHexString();
 
         }
+        else if (_device.deviceType == DeviceType.投影)
+        {
+            //Debug.Log("心跳包给配电柜发送的IP值："+_device.PCDeviceIP);
+
+            tcp_thread = new Threadtcp(_device.PCDeviceIP, ValueSheet.ProjectorCMD[_device.ProjectSerial].port, ValueSheet.ProjectorCMD[_device.ProjectSerial].read, _device, true);
+
+            tcp_thread.sendHexString();
+
+        }
     }
 
 
@@ -198,6 +179,10 @@ public class HeartbeatSystem : MonoBehaviour
         {
             UpdateLightServerDeviceSataus(device, s);
         }
+        else if (device.deviceType == DeviceType.投影)
+        {
+            UpdateProjectorServerDeviceSataus(device, s);
+        }
 
         EventCenter.RemoveListener<CentralControlDevice, string>(EventDefine.HeartbeatTcpResult, dealwithTCPResult);
 
@@ -232,6 +217,14 @@ public class HeartbeatSystem : MonoBehaviour
 
         device.status = Utility.convertMediaServerStatus(s);
       //  Debug.Log("心跳包状态："+s+"    " +"ip地址："+device.ip+"  Name" +device.MName + "  "+ device.status.ToString());
+
+    }
+
+    private void UpdateProjectorServerDeviceSataus(CentralControlDevice device, string s)
+    {
+
+        device.status = Utility.convertProjectorServerStatus(s,device);
+        //  Debug.Log("心跳包状态："+s+"    " +"ip地址："+device.ip+"  Name" +device.MName + "  "+ device.status.ToString());
 
     }
 
