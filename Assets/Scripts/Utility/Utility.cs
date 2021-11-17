@@ -158,11 +158,31 @@ namespace MyUtility {
             return returnBytes;
         }
 
-
+//状态0关机； 状态1正在开机；状态2正在关机；状态3开机；
 
         public static int convertProjectorServerStatus(string s, CentralControlDevice device)
         {
-            
+            if (s == ValueSheet.ProjectorCMD[device.ProjectSerial].receiveoff)
+            {
+                return 0;
+            }
+            else if (s == ValueSheet.ProjectorCMD[device.ProjectSerial].receiveon)
+            {
+                return 3;
+            }
+            else if (s == ValueSheet.ProjectorCMD[device.ProjectSerial].powerok)
+            {
+                if (device.status == 3)
+                {
+                    return 2;
+                }
+                if (device.status == 0)
+                {
+                    return 1;
+                }
+
+            }
+
             return 4;
         }
 

@@ -22,8 +22,12 @@ public class ProjectorDevice : MonoBehaviour
 
             EventCenter.AddListener<string>(EventDefine.TCPResult, dealwithTCPResult);
 
-            Threadtcp tcp_thread = new Threadtcp(_PCDeviceIP, 3000, ValueSheet.MediaServerCmd[0]);
-            tcp_thread.sendDefaultString();
+
+            ProjectorSerial_JSON projectorSerial_JSON = ValueSheet.ProjectorCMD[temp.ProjectSerial];
+
+            Threadtcp tcp_thread = new Threadtcp(temp.PCDeviceIP, projectorSerial_JSON.port, projectorSerial_JSON.open, temp);
+
+            tcp_thread.sendHexString();
 
         }
     }
@@ -37,8 +41,11 @@ public class ProjectorDevice : MonoBehaviour
 
             EventCenter.AddListener<string>(EventDefine.TCPResult, dealwithTCPResult);
 
-            Threadtcp tcp_thread = new Threadtcp(_PCDeviceIP, 3000, ValueSheet.MediaServerCmd[1]);
-            tcp_thread.sendDefaultString();
+            ProjectorSerial_JSON projectorSerial_JSON = ValueSheet.ProjectorCMD[temp.ProjectSerial];
+
+            Threadtcp tcp_thread = new Threadtcp(temp.PCDeviceIP, projectorSerial_JSON.port, projectorSerial_JSON.close, temp);
+
+            tcp_thread.sendHexString();
         }
 
     }

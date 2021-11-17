@@ -33,33 +33,43 @@ public class HeartbeatSystem : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.J))
         {
             Debug.Log("Button J Pressed");
-            CentralControlDevice device = ValueSheet.centralcontrolServices.floors[0].centralControlDevices[3];
-            Threadtcp tcp_thread = new Threadtcp(device.PCDeviceIP, 5000, ValueSheet.LEDCmd[2], device, true);
+            CentralControlDevice device = ValueSheet.centralcontrolServices.floors[0].centralControlDevices[0];
+
+            ProjectorSerial_JSON projectorSerial_JSON = ValueSheet.ProjectorCMD[device.ProjectSerial];
+
+            Threadtcp tcp_thread = new Threadtcp(device.PCDeviceIP, projectorSerial_JSON.port, projectorSerial_JSON.open, device, true);
+
             tcp_thread.sendHexString();
         }
-
-
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyDown(KeyCode.K))
         {
-            CentralControlDevice device = ValueSheet.centralcontrolServices.floors[0].centralControlDevices[4];
+            Debug.Log("Button k Pressed");
+            CentralControlDevice device = ValueSheet.centralcontrolServices.floors[0].centralControlDevices[0];
 
-            string s = device.LightID + " " + ValueSheet.LightCmd[2];
+            ProjectorSerial_JSON projectorSerial_JSON = ValueSheet.ProjectorCMD[device.ProjectSerial];
 
-            //byte[] bytes = { 03,06,00,01,00,00 };
-            string output = CRC.CRCCalc(s);
-
-            string send = s + " " + output;
-
-            Debug.Log("键盘i Press发送" + send);
-
-            tcp_thread = new Threadtcp("192.168.0.7", 28010, send, device, false);
+            Threadtcp tcp_thread = new Threadtcp(device.PCDeviceIP, projectorSerial_JSON.port, projectorSerial_JSON.close, device, true);
 
             tcp_thread.sendHexString();
         }
 
-   
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            Debug.Log("Button L Pressed");
+            CentralControlDevice device = ValueSheet.centralcontrolServices.floors[0].centralControlDevices[0];
 
-       
+            ProjectorSerial_JSON projectorSerial_JSON = ValueSheet.ProjectorCMD[device.ProjectSerial];
+
+            Threadtcp tcp_thread = new Threadtcp(device.PCDeviceIP, projectorSerial_JSON.port, projectorSerial_JSON.read, device, true);
+
+            tcp_thread.sendHexString();
+        }
+
+
+
+
+
+
     }
      
     private void OnApplicationQuit()
@@ -123,7 +133,6 @@ public class HeartbeatSystem : MonoBehaviour
         }
         else if (_device.deviceType == DeviceType.投影)
         {
-            //Debug.Log("心跳包给配电柜发送的IP值："+_device.PCDeviceIP);
 
             tcp_thread = new Threadtcp(_device.PCDeviceIP, ValueSheet.ProjectorCMD[_device.ProjectSerial].port, ValueSheet.ProjectorCMD[_device.ProjectSerial].read, _device, true);
 
@@ -198,8 +207,8 @@ public class HeartbeatSystem : MonoBehaviour
         {
            s = s.Substring(2, 8);       
         }
-        Debug.Log("curString:_" + s);
-        Debug.Log("心跳包状态：" + s + "    " + "ip地址：" + device.ip + "  Name" + device.MName + "  " + device.status.ToString());
+        //Debug.Log("curString:_" + s);
+        //Debug.Log("心跳包状态：" + s + "    " + "ip地址：" + device.ip + "  Name" + device.MName + "  " + device.status.ToString());
         device.status = Utility.convertLightServerStatus(s);
     }
 

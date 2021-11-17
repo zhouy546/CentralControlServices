@@ -112,9 +112,16 @@ public class ProjectorSerial_JSON
 
     public string read;
 
+    public string receiveon;
+
+    public string receiveoff;
+
+    public string powerok;
+
     public int port;
 
-    public ProjectorSerial_JSON(string _name,string _open, string _close, string _read,int _port)
+
+    public ProjectorSerial_JSON(string _name,string _open, string _close, string _read,int _port,string _receiveon,string _receiveoff,string _powerok)
     {
         name = _name;
 
@@ -125,6 +132,12 @@ public class ProjectorSerial_JSON
         read = _read;
 
         port = _port;
+
+        receiveon = _receiveon;
+
+        receiveoff = _receiveoff;
+
+        powerok = _powerok;
     }
 }
 

@@ -112,6 +112,9 @@ public class Threadtcp {
          byte[] b = Utility.strToToHexByte(data);
         clientSocket.Send(b);
         // Debug.Log("Send：" + data);
+
+        Thread.Sleep(500);
+
         result = ReceiveLEDHex(clientSocket, ValueSheet.TcpReceiveWaitTime); //5*2 seconds timeout.
                                                     // Debug.Log("Receive：" + result);
 
@@ -174,8 +177,7 @@ public class Threadtcp {
             BoardEvent(centralControlDevice, "null");
 
             t.Abort();
-        }
-
+        }      
         clientSocket.Send(encode.GetBytes(data));
        // Debug.Log("Send：" + data);
         result = Receive(clientSocket, ValueSheet.TcpReceiveWaitTime); //5*2 seconds timeout.
@@ -274,13 +276,6 @@ public class Threadtcp {
                 }
             }
             Debug.Log("result是：" + result);
-            //string s="";
-            //for (int i = 0; i < bytes.Length; i++)
-            //{
-            //    result += bytes[i];
-            //}
-
-            //Debug.Log("result是：" + result);
         }
 
         return result;

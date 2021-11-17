@@ -68,9 +68,15 @@ public class ReadJson : MonoBehaviour
 
                 string read = _itemDate["ProjectorSerial"][i]["read"].ToString();
 
+                string receiveon = _itemDate["ProjectorSerial"][i]["receiveon"].ToString();
+
+                string receiveoff = _itemDate["ProjectorSerial"][i]["receiveoff"].ToString();
+
+                string powerok = _itemDate["ProjectorSerial"][i]["powerok"].ToString();
+
                 int port =int.Parse(_itemDate["ProjectorSerial"][i]["port"].ToString());
 
-                ValueSheet.ProjectorCMD.Add(name, new ProjectorSerial_JSON(name, open, close, read, port));
+                ValueSheet.ProjectorCMD.Add(name, new ProjectorSerial_JSON(name, open, close, read, port, receiveon, receiveoff, powerok));
             }
         }
     }
