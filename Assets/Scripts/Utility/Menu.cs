@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using MyUtility;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -28,6 +29,40 @@ public class Menu : MonoBehaviour
         StartCoroutine(OpenAllDevices());
     }
 
+    public void TurnOffFloorLight()
+    {
+        StartCoroutine(IETurnOffFloorLight());
+    }
+
+    public void TurnOnFloorLight()
+    {
+        StartCoroutine(IETurnOnFloorLight());
+    }
+    private IEnumerator IETurnOffFloorLight()
+    {
+
+        foreach (CentralControlDevice device in ValueSheet.currentFloor.centralControlDevices)
+        {
+            yield return new WaitForSeconds(2.5f);
+
+            if (device.deviceType == DeviceType.灯光) { device.CloseDevice(); }
+            
+        }
+
+    }
+
+    private IEnumerator IETurnOnFloorLight()
+    {
+
+        foreach (CentralControlDevice device in ValueSheet.currentFloor.centralControlDevices)
+        {
+            yield return new WaitForSeconds(2.5f);
+
+            if (device.deviceType == DeviceType.灯光) { device.OpenDevice(); }
+
+        }
+
+    }
     private IEnumerator OpenAllDevices()
     {
         foreach (floor _floor in ValueSheet.centralcontrolServices.floors)
