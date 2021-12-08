@@ -8,12 +8,6 @@ public static class MediaServerDevice
 {
     public static CentralControlDevice temp;
 
-    private static void dealwithTCPResult(string s)
-    {
-        UpdateDeviceSataus(s);
-        EventCenter.RemoveListener<string>(EventDefine.TCPResult, dealwithTCPResult);
-
-    }
 
     public static void openMediaServer(string _PCDeviceIP, CentralControlDevice _centralControlDevice)
     {
@@ -21,10 +15,7 @@ public static class MediaServerDevice
         {
             temp = _centralControlDevice;
 
-            EventCenter.AddListener<string>(EventDefine.TCPResult, dealwithTCPResult);
-
-            Threadtcp tcp_thread = new Threadtcp(_PCDeviceIP, 3000, ValueSheet.MediaServerCmd[0]);
-            tcp_thread.sendDefaultString();
+            ValueSheet.centralcontrolServices.btntcp.TCPSend(_PCDeviceIP, 3000, ValueSheet.MediaServerCmd[0]);
 
         }
     }
@@ -36,16 +27,10 @@ public static class MediaServerDevice
 
             temp = _centralControlDevice;
 
-            EventCenter.AddListener<string>(EventDefine.TCPResult, dealwithTCPResult);
+            ValueSheet.centralcontrolServices.btntcp.TCPSend(_PCDeviceIP, 3000, ValueSheet.MediaServerCmd[1]);
 
-            Threadtcp tcp_thread = new Threadtcp(_PCDeviceIP, 3000, ValueSheet.MediaServerCmd[1]);
-            tcp_thread.sendDefaultString();
         }
 
     }
 
-    private static void UpdateDeviceSataus(string s)
-    {
-        temp.status = Utility.convertMediaServerStatus(s);
-    }
 }

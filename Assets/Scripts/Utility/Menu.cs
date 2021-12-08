@@ -43,10 +43,15 @@ public class Menu : MonoBehaviour
 
         foreach (CentralControlDevice device in ValueSheet.currentFloor.centralControlDevices)
         {
-            yield return new WaitForSeconds(2.5f);
+            ValueSheet.currentCentralControlDevice = device;
 
-            if (device.deviceType == DeviceType.灯光) { device.CloseDevice(); }
-            
+            if (device.deviceType == DeviceType.灯光) {
+
+                device.CloseDevice();
+                yield return new WaitForSeconds(2.5f);
+            }
+
+
         }
 
     }
@@ -56,9 +61,15 @@ public class Menu : MonoBehaviour
 
         foreach (CentralControlDevice device in ValueSheet.currentFloor.centralControlDevices)
         {
-            yield return new WaitForSeconds(2.5f);
+            ValueSheet.currentCentralControlDevice = device;
 
-            if (device.deviceType == DeviceType.灯光) { device.OpenDevice(); }
+            if (device.deviceType == DeviceType.灯光) { 
+                device.OpenDevice();
+                yield return new WaitForSeconds(2.5f);
+            }
+
+      
+
 
         }
 
@@ -69,9 +80,12 @@ public class Menu : MonoBehaviour
         {
             foreach (CentralControlDevice device in _floor.centralControlDevices)
             {
-                yield return new WaitForSeconds(2.5f);
+                ValueSheet.currentCentralControlDevice = device;
 
                 device.OpenDevice();
+
+                yield return new WaitForSeconds(2.5f);
+
 
             }
         }
@@ -83,9 +97,12 @@ public class Menu : MonoBehaviour
         {
             foreach (CentralControlDevice device in _floor.centralControlDevices)
             {
-                yield return new WaitForSeconds(2.5f);
+                ValueSheet.currentCentralControlDevice = device;
 
                 device.CloseDevice();
+
+                yield return new WaitForSeconds(2.5f);
+
 
             }
         }

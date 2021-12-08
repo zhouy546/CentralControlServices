@@ -7,12 +7,6 @@ public class ProjectorDevice : MonoBehaviour
 {
     public static CentralControlDevice temp;
 
-    private static void dealwithTCPResult(string s)
-    {
-        UpdateDeviceSataus(s);
-        EventCenter.RemoveListener<string>(EventDefine.TCPResult, dealwithTCPResult);
-
-    }
 
     public static void openProjectorServer(string _PCDeviceIP, CentralControlDevice _centralControlDevice)
     {
@@ -20,14 +14,9 @@ public class ProjectorDevice : MonoBehaviour
         {
             temp = _centralControlDevice;
 
-            EventCenter.AddListener<string>(EventDefine.TCPResult, dealwithTCPResult);
-
-
             ProjectorSerial_JSON projectorSerial_JSON = ValueSheet.ProjectorCMD[temp.ProjectSerial];
 
-            Threadtcp tcp_thread = new Threadtcp(temp.PCDeviceIP, projectorSerial_JSON.port, projectorSerial_JSON.open, temp);
-
-            tcp_thread.sendHexString();
+            ValueSheet.centralcontrolServices.btntcp.TCPSenHex(temp.PCDeviceIP, projectorSerial_JSON.port, projectorSerial_JSON.open);
 
         }
     }
@@ -39,19 +28,12 @@ public class ProjectorDevice : MonoBehaviour
 
             temp = _centralControlDevice;
 
-            EventCenter.AddListener<string>(EventDefine.TCPResult, dealwithTCPResult);
-
             ProjectorSerial_JSON projectorSerial_JSON = ValueSheet.ProjectorCMD[temp.ProjectSerial];
 
-            Threadtcp tcp_thread = new Threadtcp(temp.PCDeviceIP, projectorSerial_JSON.port, projectorSerial_JSON.close, temp);
+            ValueSheet.centralcontrolServices.btntcp.TCPSenHex(temp.PCDeviceIP, projectorSerial_JSON.port, projectorSerial_JSON.close);
 
-            tcp_thread.sendHexString();
         }
 
     }
 
-    private static void UpdateDeviceSataus(string s)
-    {
-        temp.status = Utility.convertProjectorServerStatus(s,temp);
-    }
 }

@@ -17,6 +17,9 @@ public static class ValueSheet
     public static int TcpSendWaitTime = 1000;
     public static bool EditMode = false;
     public static floor currentFloor;
+
+    public static List<CentralControlDevice> centralControlDevices = new List<CentralControlDevice>();
+
     public static CentralControlDevice currentCentralControlDevice;
     public static CentralControlServices centralcontrolServices;
     public static CentralControlServices_JSON ReadJsoncentralcontrolServices;
@@ -31,7 +34,7 @@ public static class ValueSheet
     #endregion
     #region 灯光收发
     public static string[] LightCmd = { "06 00 02 00 01"/*ON*/, "06 00 01 00 00"/*OFF*/,"03 00 03 00 01"/*READ*/};
-    public static string[] LightReceiveCmd = { "03020001"/*READ回值开*/, "03020000"/*READ回值关*/, "0600020001"/*发送开后回值*/, "0600010000"/*发送关后回值*/};
+    public static string[] LightReceiveCmd = { "03020001"/*READ回值开*/, "03020000"/*READ回值关*/, "06000200"/*发送开后回值*/, "06000100"/*发送关后回值*/};
     #endregion
     #region 投影机器收发
     public static Dictionary<string, ProjectorSerial_JSON> ProjectorCMD = new Dictionary<string, ProjectorSerial_JSON>();

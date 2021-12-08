@@ -5,199 +5,124 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Threading;
 using System.Text;
-
+using YunqiLibrary;
 public class HeartbeatSystem : MonoBehaviour
 {
    [SerializeField]
     private CentralControlDevice mdevice;
 
-    Threadtcp tcp_thread;
+    TCP_Client heartbeatTcp_client;
 
-  [SerializeField]
-    private int currentFloor;
-    [SerializeField]
-    private int currentDevice;
     // Start is called before the first frame update
     void Start()
     {
-        EventCenter.AddListener(EventDefine.ini, SendBeat);
 
-        EventCenter.AddListener(EventDefine.HeartBeatGoNext, SendBeat);
 
-        EventCenter.AddListener(EventDefine.HeartBeatGoNext, updateGoNextDeviceAndFloorIndex);
+
+        EventCenter.AddListener(EventDefine.ini, INI);
+
+    }
+
+    void INI()
+    {
+        StartCoroutine(ini());
+    }
+
+    private IEnumerator ini()
+    {
+        yield return new WaitForSeconds(5f);
+
+        heartbeatTcp_client = new TCP_Client(dealwithTCPResult);
+
+        foreach (floor floor in ValueSheet.centralcontrolServices.floors)
+        {
+            foreach (CentralControlDevice device in floor.centralControlDevices)
+            {
+                ValueSheet.centralControlDevices.Add(device);
+            }
+        }
+        StartCoroutine(SendBeat());
     }
 
     private  void Update()
     {
 
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            Debug.Log("Button J Pressed");
-            CentralControlDevice device = ValueSheet.centralcontrolServices.floors[0].centralControlDevices[0];
-
-            ProjectorSerial_JSON projectorSerial_JSON = ValueSheet.ProjectorCMD[device.ProjectSerial];
-
-            Threadtcp tcp_thread = new Threadtcp(device.PCDeviceIP, projectorSerial_JSON.port, projectorSerial_JSON.open, device, true);
-
-            tcp_thread.sendHexString();
-        }
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            Debug.Log("Button k Pressed");
-            CentralControlDevice device = ValueSheet.centralcontrolServices.floors[0].centralControlDevices[0];
-
-            ProjectorSerial_JSON projectorSerial_JSON = ValueSheet.ProjectorCMD[device.ProjectSerial];
-
-            Threadtcp tcp_thread = new Threadtcp(device.PCDeviceIP, projectorSerial_JSON.port, projectorSerial_JSON.close, device, true);
-
-            tcp_thread.sendHexString();
-        }
-
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            Debug.Log("Button L Pressed");
-            CentralControlDevice device = ValueSheet.centralcontrolServices.floors[0].centralControlDevices[0];
-
-            ProjectorSerial_JSON projectorSerial_JSON = ValueSheet.ProjectorCMD[device.ProjectSerial];
-
-            Threadtcp tcp_thread = new Threadtcp(device.PCDeviceIP, projectorSerial_JSON.port, projectorSerial_JSON.read, device, true);
-
-            tcp_thread.sendHexString();
-        }
-
-
-
-
+    
 
 
     }
-     
-    private void OnApplicationQuit()
+    
+    IEnumerator SendBeat()
     {
-        if (tcp_thread != null)
+
+
+        foreach (CentralControlDevice device in ValueSheet.centralControlDevices)
         {
-            tcp_thread.t.Abort();
-        }
-    }
+            if (!MyUtility.Utility.checkIp(device.PCDeviceIP))
+            {
+                device.status = 4;//等于Fault状态域名不准确的
+            }
 
+            mdevice = device;
 
-    void SendBeat()
-    {
-        Debug.Log("running");
-
-        CentralControlDevice device = ValueSheet.centralcontrolServices.floors[currentFloor].centralControlDevices[currentDevice];
-
-
-        if (!Utility.checkIp(device.PCDeviceIP))
-        {
-            device.status = 4;//等于Fault状态域名不准确的
-        }
             UpdateTCPLoop(device);
+
+            yield return new WaitForSeconds(3f);
+        }
+
+        StartCoroutine(SendBeat());
 
     }
 
 
     private void UpdateTCPLoop(CentralControlDevice _device)
     {
-        EventCenter.AddListener<CentralControlDevice, string>(EventDefine.HeartbeatTcpResult, dealwithTCPResult);
         if (_device.deviceType == DeviceType.多媒体服务器)
         {
-            tcp_thread = new Threadtcp(_device.PCDeviceIP, 3000, ValueSheet.MediaServerCmd[2], _device, true);
-            tcp_thread.sendDefaultString();
+            heartbeatTcp_client.TCPSend(_device.PCDeviceIP, 3000, ValueSheet.MediaServerCmd[2]);
         }
         else if (_device.deviceType == DeviceType.LED电柜)
         {
-            //Debug.Log("心跳包给配电柜发送的IP值："+_device.PCDeviceIP);
-
-                tcp_thread = new Threadtcp(_device.PCDeviceIP, 5000, ValueSheet.LEDCmd[2], _device, true);
-                tcp_thread.sendHexString();
+            heartbeatTcp_client.TCPSenHex(_device.PCDeviceIP, 5000, ValueSheet.LEDCmd[2]);
 
         }
         else if (_device.deviceType == DeviceType.灯光)
         {
-            Debug.Log("心跳包给灯光照明发送的IP值：" + _device.PCDeviceIP);
-
-
             string s = _device.LightID + " " + ValueSheet.LightCmd[2];
 
             string output = CRC.CRCCalc(s);
 
             string send = s + " " + output;
 
-            Debug.Log("心跳包给灯光照明发送的值：" + send);
-
-            tcp_thread = new Threadtcp(_device.PCDeviceIP, 28010, send, _device, true);
-
-            tcp_thread.sendHexString();
+            heartbeatTcp_client.TCPSenHex(_device.PCDeviceIP, 28010, send);
 
         }
         else if (_device.deviceType == DeviceType.投影)
         {
 
-            tcp_thread = new Threadtcp(_device.PCDeviceIP, ValueSheet.ProjectorCMD[_device.ProjectSerial].port, ValueSheet.ProjectorCMD[_device.ProjectSerial].read, _device, true);
-
-            tcp_thread.sendHexString();
-
+            heartbeatTcp_client.TCPSenHex(_device.PCDeviceIP, ValueSheet.ProjectorCMD[_device.ProjectSerial].port, ValueSheet.ProjectorCMD[_device.ProjectSerial].read);
         }
     }
 
-
-
-    private void updateGoNextDeviceAndFloorIndex()
+    private void dealwithTCPResult(string s)
     {
+       // Debug.Log("心跳包返回值： "+s);
 
-
-        if (currentDevice < ValueSheet.centralcontrolServices.floors[currentFloor].centralControlDevices.Count - 1)
+        if (mdevice.deviceType == DeviceType.多媒体服务器)
         {
-            currentDevice++;
+            UpdateMediaServerDeviceSataus(mdevice, s);
+        }else if(mdevice.deviceType == DeviceType.LED电柜)
+        {
+            UpdateLEDServerDeviceSataus(mdevice, s);
         }
-        else
+        else if (mdevice.deviceType == DeviceType.灯光)
         {
-            currentDevice = 0;
-            if (currentFloor < ValueSheet.centralcontrolServices.floors.Count - 1)
-            {
-                Debug.Log("心跳包增加楼层");
-
-                currentFloor++;
-
-                if (ValueSheet.centralcontrolServices.floors[currentFloor].centralControlDevices.Count == 0)
-                {
-                    currentFloor = 0;
-                }
-
-            }
-            else
-            {
-                currentFloor = 0;
-            }
-            currentDevice = 0;
+            UpdateLightServerDeviceSataus(mdevice, s);
         }
-    }
-
-
-    private void dealwithTCPResult(CentralControlDevice device, string s)
-    {
-        if (device.deviceType == DeviceType.多媒体服务器)
+        else if (mdevice.deviceType == DeviceType.投影)
         {
-            UpdateMediaServerDeviceSataus(device,s);
-        }else if(device.deviceType == DeviceType.LED电柜)
-        {
-            UpdateLEDServerDeviceSataus(device, s);
+            UpdateProjectorServerDeviceSataus(mdevice, s);
         }
-        else if (device.deviceType == DeviceType.灯光)
-        {
-            UpdateLightServerDeviceSataus(device, s);
-        }
-        else if (device.deviceType == DeviceType.投影)
-        {
-            UpdateProjectorServerDeviceSataus(device, s);
-        }
-
-        EventCenter.RemoveListener<CentralControlDevice, string>(EventDefine.HeartbeatTcpResult, dealwithTCPResult);
-
-        Debug.Log("GoNext");
-        EventCenter.Broadcast(EventDefine.HeartBeatGoNext);
-
     }
 
 
@@ -207,34 +132,23 @@ public class HeartbeatSystem : MonoBehaviour
         {
            s = s.Substring(2, 8);       
         }
-        //Debug.Log("curString:_" + s);
-        //Debug.Log("心跳包状态：" + s + "    " + "ip地址：" + device.ip + "  Name" + device.MName + "  " + device.status.ToString());
-        device.status = Utility.convertLightServerStatus(s);
+        device.status = MyUtility.Utility.convertLightServerStatus(s);
     }
 
     private void UpdateLEDServerDeviceSataus(CentralControlDevice device, string s)
     {
-    //    Debug.Log("配电柜返回值:"+ s);
-        device.status = Utility.convertLEDServerStatus(s);
-   //     Debug.Log("心跳包状态：" + s + "    " + "ip地址：" + device.ip + "  Name" + device.MName + "  " + device.status.ToString());
-
+        device.status = MyUtility.Utility.convertLEDServerStatus(s);
     }
 
 
     private void UpdateMediaServerDeviceSataus(CentralControlDevice device,string s)
     {
-
-        device.status = Utility.convertMediaServerStatus(s);
-      //  Debug.Log("心跳包状态："+s+"    " +"ip地址："+device.ip+"  Name" +device.MName + "  "+ device.status.ToString());
-
+        device.status = MyUtility.Utility.convertMediaServerStatus(s);
     }
 
     private void UpdateProjectorServerDeviceSataus(CentralControlDevice device, string s)
     {
-
-        device.status = Utility.convertProjectorServerStatus(s,device);
-        //  Debug.Log("心跳包状态："+s+"    " +"ip地址："+device.ip+"  Name" +device.MName + "  "+ device.status.ToString());
-
+        device.status = MyUtility.Utility.convertProjectorServerStatus(s,device);
     }
 
 

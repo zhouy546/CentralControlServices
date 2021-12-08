@@ -151,6 +151,7 @@ public class CentralControlDevice : MonoBehaviour,IPointerClickHandler,IBeginDra
         //手动开关设备
         else if (!ValueSheet.EditMode && !ismove)
         {
+            ValueSheet.currentCentralControlDevice = this;
             Debug.Log("点击控制节点");
             if (status == 0)
             {

@@ -38,6 +38,11 @@ public static class CRC
         string[] redata = new string[2];
         redata[1] = Convert.ToString((byte)((crc >> 8) & 0xff), 16);
         redata[0] = Convert.ToString((byte)((crc & 0xff)), 16);
+        if (redata[0].Length == 1)
+        {
+            redata[0] = "0" + redata[0];
+        }
+
         //Debug.Log("校验结果：" + redata[0] + " " + redata[1]);
         return redata[0] + " " + redata[1];
     }
