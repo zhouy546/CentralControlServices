@@ -5,11 +5,11 @@
          "open":"25 31 50 4f 57 52 20 31 0d",  
          "close":"25 31 50 4f 57 52 20 30 0d",  
          "read":"25 31 50 4f 57 52 20 3f 0d",
-         "receiveon":"504A4C494E4B20300D2531504F57523D310D",
+         "receiveon":"2531504F57523D310D",
                     //504A4C494E4B20300D2531504F57523D310D  PJLINK 0 %1POWR=1
-         "receiveoff":"504A4C494E4B20300D2531504F57523D300D",
+         "receiveoff":"2531504F57523D300D",
                     //504A4C494E4B20300D2531504F57523D300D  PJLINK 0 %1POWR=0
-         "powerok":"504A4C494E4B20300D2531504F57523D4F4B0D",   
+         "powerok":"2531504F57523D4F4B0D",   
                     //504A4C494E4B20300D2531504F57523D4F4B0D  power ok
          "port":4352
      },

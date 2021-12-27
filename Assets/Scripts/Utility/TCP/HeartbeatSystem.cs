@@ -17,8 +17,6 @@ public class HeartbeatSystem : MonoBehaviour
     void Start()
     {
 
-
-
         EventCenter.AddListener(EventDefine.ini, INI);
 
     }
@@ -32,7 +30,7 @@ public class HeartbeatSystem : MonoBehaviour
     {
         yield return new WaitForSeconds(5f);
 
-        heartbeatTcp_client = new TCP_Client(dealwithTCPResult);
+        heartbeatTcp_client = new TCP_Client(dealwithTCPResult, OnConnectCallBack);
 
         foreach (floor floor in ValueSheet.centralcontrolServices.floors)
         {
@@ -46,10 +44,21 @@ public class HeartbeatSystem : MonoBehaviour
 
     private  void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            //testTcpMsg.TCPSenHex("192.168.0.8", 4352, ValueSheet.ProjectorCMD["PJLink"].read);
+        }
 
-    
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            //testTcpMsg.TCPSenHex("192.168.0.8", 4352, ValueSheet.ProjectorCMD["PJLink"].open);
+        }
 
 
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            //testTcpMsg.TCPSenHex("192.168.0.8", 4352, ValueSheet.ProjectorCMD["PJLink"].close);
+        }
     }
     
     IEnumerator SendBeat()
@@ -67,7 +76,7 @@ public class HeartbeatSystem : MonoBehaviour
 
             UpdateTCPLoop(device);
 
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(2f);
         }
 
         StartCoroutine(SendBeat());
@@ -77,6 +86,8 @@ public class HeartbeatSystem : MonoBehaviour
 
     private void UpdateTCPLoop(CentralControlDevice _device)
     {
+        Debug.Log("发送"); 
+
         if (_device.deviceType == DeviceType.多媒体服务器)
         {
             heartbeatTcp_client.TCPSend(_device.PCDeviceIP, 3000, ValueSheet.MediaServerCmd[2]);
@@ -104,23 +115,32 @@ public class HeartbeatSystem : MonoBehaviour
         }
     }
 
+    private void OnConnectCallBack(string s)
+    {
+        Debug.Log("TCP连接时"+s);
+    }
+
     private void dealwithTCPResult(string s)
     {
-       // Debug.Log("心跳包返回值： "+s);
-
+      
         if (mdevice.deviceType == DeviceType.多媒体服务器)
         {
+            Debug.Log("L多媒体服务器心跳包返回值： " + s);
             UpdateMediaServerDeviceSataus(mdevice, s);
         }else if(mdevice.deviceType == DeviceType.LED电柜)
         {
+            Debug.Log("LED电柜心跳包返回值： " + s);
             UpdateLEDServerDeviceSataus(mdevice, s);
         }
         else if (mdevice.deviceType == DeviceType.灯光)
         {
+            Debug.Log("灯光心跳包返回值： " + s);
             UpdateLightServerDeviceSataus(mdevice, s);
         }
         else if (mdevice.deviceType == DeviceType.投影)
         {
+            Debug.Log("投影心跳包返回值： " + s);
+
             UpdateProjectorServerDeviceSataus(mdevice, s);
         }
     }
@@ -143,6 +163,7 @@ public class HeartbeatSystem : MonoBehaviour
 
     private void UpdateMediaServerDeviceSataus(CentralControlDevice device,string s)
     {
+        //Debug.Log(s);
         device.status = MyUtility.Utility.convertMediaServerStatus(s);
     }
 

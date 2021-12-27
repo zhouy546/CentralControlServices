@@ -12,7 +12,12 @@ public class CentralControlServices : MonoBehaviour
 
     private void Start()
     {
-        btntcp = new TCP_Client(btnTCPCallBack);
+        btntcp = new TCP_Client(btnTCPCallBack, OnConnectCallBack);
+    }
+
+    public void OnConnectCallBack(string s)
+    {
+        Debug.Log("tcp连接："+s);
     }
 
     private void btnTCPCallBack(string s)
