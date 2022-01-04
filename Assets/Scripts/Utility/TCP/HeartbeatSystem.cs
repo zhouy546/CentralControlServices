@@ -8,37 +8,34 @@ using System.Text;
 using YunqiLibrary;
 public class HeartbeatSystem : MonoBehaviour
 {
+   
    [SerializeField]
     private CentralControlDevice mdevice;
 
     TCP_Client heartbeatTcp_client;
 
+    public List<CentralControlDevice> beatsLoopDevices = new List<CentralControlDevice>();
+
     // Start is called before the first frame update
     void Start()
     {
 
-        EventCenter.AddListener(EventDefine.ini, INI);
+        EventCenter.AddListener(EventDefine.HeartBeatStart, INI);
 
     }
 
-    void INI()
+    public void INI()
     {
         StartCoroutine(ini());
     }
 
     private IEnumerator ini()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(0.1f);
 
         heartbeatTcp_client = new TCP_Client(dealwithTCPResult, OnConnectCallBack);
 
-        foreach (floor floor in ValueSheet.centralcontrolServices.floors)
-        {
-            foreach (CentralControlDevice device in floor.centralControlDevices)
-            {
-                ValueSheet.centralControlDevices.Add(device);
-            }
-        }
+
         StartCoroutine(SendBeat());
     }
 
@@ -65,19 +62,25 @@ public class HeartbeatSystem : MonoBehaviour
     {
 
 
-        foreach (CentralControlDevice device in ValueSheet.centralControlDevices)
-        {
-            if (!MyUtility.Utility.checkIp(device.PCDeviceIP))
+        foreach (CentralControlDevice device in beatsLoopDevices)
+        {           
+            if (!HeartBeatCtr.instance.isHoldHeartBeats)
             {
-                device.status = 4;//等于Fault状态域名不准确的
+
+                if (!MyUtility.Utility.checkIp(device.PCDeviceIP))
+                {
+                    device.status = 4;//等于Fault状态域名不准确的
+                }
+
+                //Debug.Log("running");
+                mdevice = device;
+
+                UpdateTCPLoop(device);
             }
-
-            mdevice = device;
-
-            UpdateTCPLoop(device);
-
             yield return new WaitForSeconds(2f);
         }
+
+        yield return new WaitForSeconds(0.5f);
 
         StartCoroutine(SendBeat());
 
@@ -86,7 +89,7 @@ public class HeartbeatSystem : MonoBehaviour
 
     private void UpdateTCPLoop(CentralControlDevice _device)
     {
-        Debug.Log("发送"); 
+        //Debug.Log("发送"); 
 
         if (_device.deviceType == DeviceType.多媒体服务器)
         {
@@ -125,21 +128,21 @@ public class HeartbeatSystem : MonoBehaviour
       
         if (mdevice.deviceType == DeviceType.多媒体服务器)
         {
-            Debug.Log("L多媒体服务器心跳包返回值： " + s);
+            //Debug.Log("L多媒体服务器心跳包返回值： " + s);
             UpdateMediaServerDeviceSataus(mdevice, s);
         }else if(mdevice.deviceType == DeviceType.LED电柜)
         {
-            Debug.Log("LED电柜心跳包返回值： " + s);
+            //Debug.Log("LED电柜心跳包返回值： " + s);
             UpdateLEDServerDeviceSataus(mdevice, s);
         }
         else if (mdevice.deviceType == DeviceType.灯光)
         {
-            Debug.Log("灯光心跳包返回值： " + s);
+            //Debug.Log("灯光心跳包返回值： " + s);
             UpdateLightServerDeviceSataus(mdevice, s);
         }
         else if (mdevice.deviceType == DeviceType.投影)
         {
-            Debug.Log("投影心跳包返回值： " + s);
+            //Debug.Log("投影心跳包返回值： " + s);
 
             UpdateProjectorServerDeviceSataus(mdevice, s);
         }

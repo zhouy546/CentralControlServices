@@ -18,12 +18,17 @@ public static class ValueSheet
     public static bool EditMode = false;
     public static floor currentFloor;
 
-    public static List<CentralControlDevice> centralControlDevices = new List<CentralControlDevice>();
+    public static List<List<CentralControlDevice>> centralControlDevices = new List<List<CentralControlDevice>>();
+
+    public static List<CentralControlDevice> devices = new List<CentralControlDevice>();
+
 
     public static CentralControlDevice currentCentralControlDevice;
     public static CentralControlServices centralcontrolServices;
     public static CentralControlServices_JSON ReadJsoncentralcontrolServices;
     public static string defaultBGURL = Application.streamingAssetsPath + "/defaultBG.png";
+
+  
     #region 多媒体服务器收发指令
     public static string[] MediaServerCmd = { "start", "stop", "read" };
     public static string[] MediaServerReceiveCmd = { "running", "stopping", "start" , "stopped" };
